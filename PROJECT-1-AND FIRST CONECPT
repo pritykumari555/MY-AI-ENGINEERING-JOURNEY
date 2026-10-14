@@ -1,0 +1,94 @@
+# AI Interview Preparation Agent 🤖
+
+A Python-based AI interview assistant powered by the Groq API, designed to help users practise technical interviews and receive structured feedback on their answers.
+
+## 🎯 Project Goal
+
+The goal of this project is to build an AI interview assistant that can:
+
+* Ask one technical interview question at a time.
+* Wait for the user's answer before evaluating it.
+* Provide feedback, a score, and an improved answer.
+* Maintain recent conversation history for context.
+* Validate structured feedback using Pydantic.
+
+## 🛠️ Tech Stack
+
+* **Python** — Application logic
+* **Groq API** — LLM-powered responses
+* **Pydantic** — Structured data validation
+* **python-dotenv** — Environment variable management
+
+## 📚 Concepts I'm Learning
+
+* LLM message roles: `system`, `user`, and `assistant`
+* System prompts and prompt engineering
+* API requests and response handling
+* Conversation history and context management
+* Temperature and token usage
+* JSON and structured output validation
+* Environment variables and API key security
+* Error handling and application reliability
+
+## 📂 Project Structure
+
+```text
+ai-interview-preparation-agent/
+├── main.py
+├── requirements.txt
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
+## ⚙️ Setup and Installation
+
+1. Install Python on your system.
+
+2. Clone this repository:
+
+   `git clone YOUR_GITHUB_REPOSITORY_URL`
+
+3. Navigate to the project directory:
+
+   `cd ai-interview-preparation-agent`
+
+4. Install the dependencies:
+
+   `pip install -r requirements.txt`
+
+5. Create a `.env` file using `.env.example` as a template.
+
+6. Add your Groq API key and a supported model ID to your local `.env` file.
+
+7. Run the application:
+
+   `python main.py`
+
+**Note:** Replace the placeholder repository URL with your actual GitHub repository URL. Ensure your API key and model configuration are valid before running the application.
+
+## 🔐 Security
+
+* Never upload your real API key or `.env` file to GitHub.
+* Keep sensitive credentials in environment variables.
+* Use `.gitignore` to exclude `.env` from version control.
+
+## 🚧 Current Status
+
+This is a learning project. I'm focusing on understanding each component, testing the application, handling errors, and improving its reliability.
+
+## 🚀 Future Improvements
+
+* Add automated tests.
+* Improve error handling and response validation.
+* Build a simple user interface.
+* Enhance interview feedback and conversation management.
+* Explore more LLM-powered applications.
+
+## 🌱 Learning by Building
+
+I'm documenting my AI Engineering journey by building practical projects, understanding the underlying concepts, learning from mistakes, and improving consistently.
+
+Feedback and suggestions are welcome!
+
+#AIEngineering #Python #LLM #GroqAPI #Pydantic #LearningInPublic
