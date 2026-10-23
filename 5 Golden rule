@@ -1,0 +1,292 @@
+# Sliding Window: 5 Golden Rules
+
+## Introduction
+
+Sliding Window is an algorithmic technique used to solve problems involving contiguous subarrays or substrings.
+
+Instead of recalculating the result for every possible subarray or substring, we maintain a window using two pointers, usually `low` and `high`. We expand or shrink this window according to the problem's requirements.
+
+**The main goal:** Solve problems efficiently by reusing information from the current window.
+
+---
+
+## Rule 1: Identify the Type of Window
+
+Before writing code, determine whether the problem requires a **Fixed-Size Window** or a **Variable-Size Window**.
+
+### A. Fixed-Size Sliding Window
+
+The window must have a specific length, usually given as `k` or determined by a pattern's length.
+
+**Common problems:**
+- Maximum Sum Subarray of Size K
+- Find All Anagrams in a String
+- Permutation in String
+- Sliding Window Maximum
+
+**Basic approach:**
+
+```cpp
+for (int high = 0; high < n; high++) {
+    // Add the current element to the window
+
+    if (high - low + 1 > k) {
+        // Remove the leftmost element
+        low++;
+    }
+
+    if (high - low + 1 == k) {
+        // Process the fixed-size window
+    }
+}
+```
+
+**Remember:** For fixed-size windows, the window length must equal `k` when processing the answer.
+
+### B. Variable-Size Sliding Window
+
+The window length is not fixed. It grows or shrinks depending on the problem's conditions.
+
+**Common problems:**
+- Longest Substring Without Repeating Characters
+- Longest Substring with At Most K Distinct Characters
+- Minimum Window Substring
+- Minimum Size Subarray Sum (with positive numbers)
+
+**Basic approach:**
+
+```cpp
+for (int high = 0; high < n; high++) {
+    // Add the current element
+
+    while (window_is_invalid) {
+        // Remove the leftmost element's effect
+        low++;
+    }
+
+    // Update the answer according to the problem
+}
+```
+
+**Remember:** First identify what makes the window invalid. Use that condition to decide when to shrink it.
+
+---
+
+## Rule 2: Identify When the Window Becomes Invalid
+
+This is one of the most important steps in sliding window problems.
+
+Ask yourself:
+
+**"What condition makes my current window invalid according to the question?"**
+
+Examples:
+
+### A. Fixed Window Size
+
+If the required window size is `k`:
+
+```cpp
+while (high - low + 1 > k) {
+    // Shrink the window
+}
+```
+
+The expression `high - low + 1` calculates the current window length.
+
+### B. Repeating Characters
+
+For Longest Substring Without Repeating Characters:
+
+```cpp
+while (mp[s[high]] > 1) {
+    // Shrink while the current character is duplicated
+}
+```
+
+The window is invalid when a character appears more than once.
+
+### C. Too Many Distinct Characters
+
+For a problem allowing at most `k` distinct characters:
+
+```cpp
+while (mp.size() > k) {
+    // Shrink until the distinct-character limit is satisfied
+}
+```
+
+This requires removing map entries whose frequency becomes zero.
+
+### D. Minimum Window Substring
+
+In Minimum Window Substring, the strategy is different. Once the window contains all required characters with their required frequencies, the window is valid.
+
+We update the answer and then shrink the window to search for a smaller valid window.
+
+**Golden tip:** Do not memorize `while` conditions. Derive them from the problem's validity requirements.
+
+---
+
+## Rule 3: Correctly Remove the Leftmost Element
+
+Whenever the window shrinks, remove the effect of the element at `low` before moving `low` forward.
+
+For example, when maintaining character frequencies:
+
+```cpp
+mp[s[low]]--;
+
+if (mp[s[low]] == 0) {
+    mp.erase(s[low]);
+}
+
+low++;
+```
+
+### Why is this important?
+
+Suppose the current window is:
+
+```text
+a b c a
+^     ^
+low   high
+```
+
+If the leftmost `a` is removed, the frequency of `a` must decrease. Otherwise, the map will contain incorrect frequency information, and your window condition may not work correctly.
+
+**Important points:**
+- Remove `s[low]`, not `s[high]`.
+- Update the frequency before incrementing `low`.
+- Erase zero-frequency entries when distinct-character counts depend on `mp.size()`.
+- For sum-based problems, subtract the outgoing element from the running sum.
+
+---
+
+## Rule 4: Understand When to Update the Answer
+
+The answer-update strategy depends on what the problem asks you to find.
+
+### A. Longest Valid Substring or Subarray
+
+First make the window valid, then calculate its length.
+
+```cpp
+maxlen = max(maxlen, high - low + 1);
+```
+
+Examples:
+- Longest Substring Without Repeating Characters
+- Longest Substring with At Most K Distinct Characters
+
+### B. Shortest Valid Substring or Subarray
+
+When the window becomes valid, update the minimum answer. Then continue shrinking the window while it remains valid.
+
+```cpp
+while (window_is_valid) {
+    minlen = min(minlen, high - low + 1);
+
+    // Remove the leftmost element's effect
+    low++;
+}
+```
+
+This is a conceptual template. The actual code must update the validity state correctly after removing an element.
+
+Examples:
+- Minimum Window Substring
+- Minimum Size Subarray Sum
+
+### C. Fixed-Size Window
+
+Process the answer only when the window reaches the required size.
+
+```cpp
+if (high - low + 1 == k) {
+    // Calculate or compare the window result
+}
+```
+
+**Golden tip:** Always identify whether you need the longest window, the shortest window, or a window that satisfies an exact matching condition.
+
+---
+
+## Rule 5: Track Frequencies and Handle Edge Cases
+
+Many sliding window problems require a frequency map, a running sum, or another data structure to maintain information about the current window.
+
+Understand these three expressions:
+
+| Expression | Meaning |
+|---|---|
+| `high - low + 1` | Total length of the window |
+| `mp.size()` | Number of distinct keys in the map |
+| `mp[ch]` | Frequency of character `ch` |
+
+### Example: Permutation in String
+
+Suppose:
+
+```cpp
+s1 = "ab";
+s2 = "eidbaooo";
+```
+
+The window length must equal `s1.length()`, which is `2`.
+
+Use:
+
+```cpp
+while (high - low + 1 > s1.length()) {
+    // Shrink the window
+}
+```
+
+Do not use:
+
+```cpp
+while (mp2.size() > s1.length())
+```
+
+Why? Because `mp2.size()` counts distinct characters, not the total number of characters in the window.
+
+For example, `"aaaa"` has a length of `4`, but its frequency map contains only one distinct key.
+
+### Edge Cases to Check
+
+Before submitting your solution, consider:
+
+1. Is the input empty?
+2. Can the answer be zero or does no valid window exist?
+3. Are repeated characters allowed?
+4. Must character frequencies match exactly?
+5. Does the map need zero-frequency entries erased?
+6. Can the array contain negative numbers?
+
+**Important:** The usual sum-based sliding window approach for finding a minimum subarray with sum at least a target relies on positive numbers. Negative numbers can break the monotonic behavior needed by the standard approach.
+
+---
+
+## A 5-Question Checklist Before Coding
+
+Before implementing any sliding window solution, ask yourself:
+
+1. **Window type:** Is it fixed-size or variable-size?
+2. **Validity:** What exactly makes the window invalid, or when does it become valid?
+3. **Shrinking:** What information must I remove when `low` moves forward?
+4. **Answer:** Am I looking for the longest, shortest, or an exact matching window?
+5. **Edge cases:** Have I handled duplicates, frequencies, empty inputs, and cases with no valid answer?
+
+## Final Takeaway
+
+The most important skill in sliding window problems is not memorizing code templates. It is understanding the condition that makes a window valid or invalid.
+
+Once you identify that condition, you can decide:
+- When to expand the window.
+- When to shrink the window.
+- What information to maintain.
+- When to update the answer.
+
+**Understand the window. Derive the condition. Then write the code.**
