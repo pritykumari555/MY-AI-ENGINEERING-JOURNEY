@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart URL Shortener</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>Smart URL Shortener</h1>
+    <p class="subtitle">Shorten links and understand them with AI</p>
+
+    <div class="row">
+      <input
+        id="urlInput"
+        type="url"
+        placeholder="https://example.com/very/long/link"
+      />
+      <button onclick="shorten()">Shorten</button>
+    </div>
+
+    <div id="result"></div>
+
+    <hr />
+
+    <button id="aiButton" onclick="analyzeWithAI()">
+      Analyze with AI
+    </button>
+
+    <div id="aiResult"></div>
+  </div>
+
+  <script>
+    async function shorten() {
+      const url = document.getElementById("urlInput").value.trim();
+      const result = document.getElementById("result");
+
+      if (!url) {
+        result.className = "error";
+        result.textContent = "Please enter a URL.";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          result.className = "error";
+          result.textContent = data.message || "Could not shorten URL.";
+          return;
+        }
+
+        result.className = "success";
+
+        const link = document.createElement("a");
+        link.href = data.shortUrl;
+        link.textContent = data.shortUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+
+        result.replaceChildren(document.createTextNode("Short link: "), link);
+
+      } catch (error) {
+        result.className = "error";
+        result.textContent = "Could not connect to the server.";
+      }
+    }
+
+    async function analyzeWithAI() {
+      const url = document.getElementById("urlInput").value.trim();
+      const aiResult = document.getElementById("aiResult");
+      const aiButton = document.getElementById("aiButton");
+
+      if (!url) {
+        aiResult.className = "error";
+        aiResult.textContent = "Please enter a URL first.";
+        return;
+      }
+
+      aiButton.disabled = true;
+      aiButton.textContent = "Analyzing...";
+      aiResult.className = "";
+      aiResult.textContent = "AI is analyzing your link...";
+
+      try {
+        const res = await fetch("/api/ai-link-info", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            url,
+            context: "Analyze this link and suggest its likely category."
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.detail || data.message || "AI analysis failed.");
+        }
+
+        aiResult.className = "success";
+
+        const heading = document.createElement("h3");
+        heading.textContent = "AI Link Analysis";
+
+        const description = document.createElement("p");
+        description.textContent = data.aiInfo || "No AI information returned.";
+
+        aiResult.replaceChildren(heading, description);
+
+      } catch (error) {
+        aiResult.className = "error";
+        aiResult.textContent = error.message || "Could not connect to AI service.";
+      } finally {
+        aiButton.disabled = false;
+        aiButton.textContent = "Analyze with AI";
+      }
+    }
+  </script>
+</body>
+</html>

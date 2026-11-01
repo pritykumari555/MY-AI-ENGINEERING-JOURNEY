@@ -1,0 +1,12 @@
+
+# Secrets
+.env
+**/.env
+Ai/.env
+Backend/.env
+
+# Dependencies and cache
+Backend/node_modules/
+Ai/__pycache__/
+.venv/
+venv/
